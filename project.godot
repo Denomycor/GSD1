@@ -8,6 +8,16 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "Position2D",
+"class": "StaticPiece",
+"language": "GDScript",
+"path": "res://source/pieces/staticPiece/StaticPiece.gd"
+} ]
+_global_script_class_icons={
+"StaticPiece": ""
+}
+
 [application]
 
 config/name="GSD1"
