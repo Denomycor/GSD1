@@ -4,15 +4,16 @@ extends Position2D
 enum Classes {ATTACK, UTILITY, RESOURCE, HQ, WALL, OTHER}
 enum Elements {FIRE, WATER, EARTH, WIND, LIGHTNING, VOID}
 
-export var hp :int
-export var status := []
 
-export(int, "ATTACK"," UTILITY", "RESOURCE", "HQ", "WALL", "OTHER") var _piece_class :int setget ,get_piece_class
-export(int, "FIRE", "WATER", "EARTH", "WIND", "LIGHTNING", "VOID") var _element :int setget ,get_element
-
-export var _cost : int setget ,get_cost
+export(Classes) var _piece_class :int setget ,get_piece_class
+export(Elements) var _element :int setget ,get_element
+export var _hp :int setget ,get_hp
+export var _cost :int setget ,get_cost
 export var _piece_name :String setget ,get_piece_name
 export var _description :String setget ,get_description
+
+var status := []
+var current_hp :int
 
 var _board_pos :Vector2 setget ,get_board_pos
 var _team :int setget ,get_team
@@ -25,7 +26,8 @@ func _ready():
 	
 	
 	
-	
+func get_hp():
+	return _hp	
 
 func get_piece_class():
 	return _piece_class
