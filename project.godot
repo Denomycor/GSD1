@@ -10,6 +10,11 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "Position2D",
+"class": "BoardWallPiece",
+"language": "GDScript",
+"path": "res://source/pieces/boardWallPiece/BoardWallPiece.gd"
+}, {
+"base": "Position2D",
 "class": "MovablePiece",
 "language": "GDScript",
 "path": "res://source/pieces/movablePiece/MovablePiece.gd"
@@ -20,6 +25,7 @@ _global_script_classes=[ {
 "path": "res://source/pieces/staticPiece/StaticPiece.gd"
 } ]
 _global_script_class_icons={
+"BoardWallPiece": "",
 "MovablePiece": "",
 "StaticPiece": ""
 }
