@@ -1,0 +1,60 @@
+[1mdiff --git a/project.godot b/project.godot[m
+[1mindex 835eff2..a635b2d 100644[m
+[1m--- a/project.godot[m
+[1m+++ b/project.godot[m
+[36m@@ -10,11 +10,17 @@[m [mconfig_version=4[m
+ [m
+ _global_script_classes=[ {[m
+ "base": "Position2D",[m
+[32m+[m[32m"class": "MovablePiece",[m
+[32m+[m[32m"language": "GDScript",[m
+[32m+[m[32m"path": "res://source/pieces/movablePiece/MovablePiece.gd"[m
+[32m+[m[32m}, {[m
+[32m+[m[32m"base": "Position2D",[m
+ "class": "StaticPiece",[m
+ "language": "GDScript",[m
+ "path": "res://source/pieces/staticPiece/StaticPiece.gd"[m
+ } ][m
+ _global_script_class_icons={[m
+[32m+[m[32m"MovablePiece": "",[m
+ "StaticPiece": ""[m
+ }[m
+ [m
+[1mdiff --git a/source/pieces/staticPiece/StaticPiece.gd b/source/pieces/staticPiece/StaticPiece.gd[m
+[1mindex 35d91c7..244b94b 100644[m
+[1m--- a/source/pieces/staticPiece/StaticPiece.gd[m
+[1m+++ b/source/pieces/staticPiece/StaticPiece.gd[m
+[36m@@ -4,16 +4,17 @@[m [mextends Position2D[m
+ enum Classes {ATTACK, UTILITY, RESOURCE, HQ, WALL, OTHER}[m
+ enum Elements {FIRE, WATER, EARTH, WIND, LIGHTNING, VOID}[m
+ [m
+[31m-export var hp :int[m
+[31m-export var status := [][m
+ [m
+[31m-export(int, "ATTACK"," UTILITY", "RESOURCE", "HQ", "WALL", "OTHER") var _piece_class :int setget ,get_piece_class[m
+[31m-export(int, "FIRE", "WATER", "EARTH", "WIND", "LIGHTNING", "VOID") var _element :int setget ,get_element[m
+[31m-[m
+[31m-export var _cost : int setget ,get_cost[m
+[32m+[m[32mexport(Classes) var _piece_class :int setget ,get_piece_class[m
+[32m+[m[32mexport(Elements) var _element :int setget ,get_element[m
+[32m+[m[32mexport var _hp :int setget ,get_hp[m
+[32m+[m[32mexport var _cost :int setget ,get_cost[m
+ export var _piece_name :String setget ,get_piece_name[m
+ export var _description :String setget ,get_description[m
+ [m
+[32m+[m[32mvar status := [][m
+[32m+[m[32mvar current_hp :int[m
+[32m+[m
+ var _board_pos :Vector2 setget ,get_board_pos[m
+ var _team :int setget ,get_team[m
+ [m
+[36m@@ -25,7 +26,8 @@[m [mfunc _ready():[m
+ 	[m
+ 	[m
+ 	[m
+[31m-	[m
+[32m+[m[32mfunc get_hp():[m
+[32m+[m	[32mreturn _hp[m[41m	[m
+ [m
+ func get_piece_class():[m
+ 	return _piece_class[m
