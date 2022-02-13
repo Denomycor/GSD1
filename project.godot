@@ -20,6 +20,11 @@ _global_script_classes=[ {
 "path": "res://source/pieces/movablePiece/MovablePiece.gd"
 }, {
 "base": "Position2D",
+"class": "RotatablePiece",
+"language": "GDScript",
+"path": "res://source/pieces/rotatablePiece/RotatablePiece.gd"
+}, {
+"base": "Position2D",
 "class": "StaticPiece",
 "language": "GDScript",
 "path": "res://source/pieces/staticPiece/StaticPiece.gd"
@@ -27,6 +32,7 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "BoardWallPiece": "",
 "MovablePiece": "",
+"RotatablePiece": "",
 "StaticPiece": ""
 }
 

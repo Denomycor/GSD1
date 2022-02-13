@@ -30,7 +30,7 @@ func avaiable_move(board):
 
 
 # abstract funcs
-func move(to):
+func _move_piece():
 	pass
 
 
