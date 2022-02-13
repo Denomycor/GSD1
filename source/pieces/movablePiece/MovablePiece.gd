@@ -9,6 +9,7 @@ export var _move :int setget ,get_move
 func _ready():
 	pass
 
+
 func _adjacent_board_pos(pos :Vector2):
 	return [Vector2(pos.x+1, pos.y),Vector2(pos.x-1, pos.y),Vector2(pos.x, pos.y+1),Vector2(pos.x, pos.y-1)]
 

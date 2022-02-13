@@ -14,6 +14,7 @@ export(Elements) var _element :int setget ,get_element
 var _board_pos :Vector2 setget ,get_board_pos
 var _team :int setget ,get_team
 
+
 # private funcs
 func _ready():
 	pass
