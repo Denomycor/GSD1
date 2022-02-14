@@ -10,30 +10,12 @@ config_version=4
 
 _global_script_classes=[ {
 "base": "Position2D",
-"class": "BoardWallPiece",
+"class": "Piece",
 "language": "GDScript",
-"path": "res://source/pieces/boardWallPiece/BoardWallPiece.gd"
-}, {
-"base": "Position2D",
-"class": "MovablePiece",
-"language": "GDScript",
-"path": "res://source/pieces/movablePiece/MovablePiece.gd"
-}, {
-"base": "Position2D",
-"class": "RotatablePiece",
-"language": "GDScript",
-"path": "res://source/pieces/rotatablePiece/RotatablePiece.gd"
-}, {
-"base": "Position2D",
-"class": "StaticPiece",
-"language": "GDScript",
-"path": "res://source/pieces/staticPiece/StaticPiece.gd"
+"path": "res://source/pieces/abstractions/Piece.gd"
 } ]
 _global_script_class_icons={
-"BoardWallPiece": "",
-"MovablePiece": "",
-"RotatablePiece": "",
-"StaticPiece": ""
+"Piece": ""
 }
 
 [application]
