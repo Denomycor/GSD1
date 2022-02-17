@@ -128,10 +128,10 @@ func _destroy():
 	free()
 
 
-# abstract, changes of states that happen when this piece is activated
+# abstract, called when a piece is activated, returns the pieces that changed their state
 func _activate():
 	pass
 
 # returns whether this piece dropped to 0 health or not (doesn't call _destroy by default)
 func _take_damage(value :int) -> bool:
-	pass
+	pass 
