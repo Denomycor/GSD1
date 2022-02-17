@@ -6,11 +6,10 @@ signal piece_left_clicked
 signal piece_right_clicked
 
 # enums
-enum Classes {ATTACK, UTILITY, RESOURCE, HQ, WALL, OTEHR}
+enum Classes {ATTACK, UTILITY, RESOURCE, HQ, WALL, OTHER}
 enum Elements {FIRE, WATER, EARTH, WIND, LIGHTNING, VOID, NONE}
-enum Rotation {UP, RIGHT, DOWN, LEFT}
-enum Status {MOVING, IMOVABLE}
 enum Actions {MOVE, ROTATE, ACTIVATE, TOGGLE}
+#enum Status_tags {MOVING} see later if enum is to be used or classes
 
 # private const attributes
 export var _name :String               # Name of the piece
@@ -21,25 +20,31 @@ export var _team :int                  # Team of the piece
 export var _cost :int                  # Cost to play the piece
 export(Classes) var _class :int        # Class of the piece from Classes enum
 export(Elements) var _element :int     # Element of the piece from Element enum
-export var _priority :int              # Priority of this piece effects over other piece effects
-var _action_points :int                # Nr of actions this piece can make per turn
-var _actions := []                     # Actions this piece is allowed to do from Actions enum
+export var _action_points :int         # Nr of actions this piece can make per turn
+export var _actions := []              # Actions this piece is allowed to do from Actions enum
+export var _vision :int                # Vision around this piece
 
 # public attributes
-var status := []                       # Tags of effects affecting the piece from Status enum
+var status_tags := {}                  # Dictionary of tags of effects affecting the piece from Status enum
+var board                              # Reference to the board
 
 # private attributes
 var _board_pos :Vector2                # Board position (independent from position on screen)
-var _rotation :int                     # Rotation from Rotation enum
+var _rotation :Vector2                 # Rotation of the piece
 var _hp :int                           # Current hp
-var _remaining_actions                 # Remaining action points this turn
+var _remaining_actions :int            # Remaining action points this turn
 
 # onready vars
 onready var sprite = $Sprite
 
+
+
+# PRIVATE FUNCS-------------------------------------------------------------------------------------------------
+
 # ready func
 func _ready():
 	pass
+
 
 # get locations adjacent to a given position 
 func _adjacent_board_locations(pos):
@@ -53,11 +58,14 @@ func _input(event):
 			emit_signal("piece_left_clicked", self)
 	if event is InputEventMouseButton and event.pressed and event.button_index == BUTTON_RIGHT:
 		if sprite.get_rect().has_point(to_local(event.position)):
-			emit_signal("piece_right_clicked", self)
+			emit_signal("piece_right_clicked", self)	
 
+
+
+# PUBLIC FUNCS--------------------------------------------------------------------------------------------------
 
 # returns all position the piece can move to
-func avaiable_moves(board):	
+func avaiable_moves():	
 	var queue = [[_board_pos, _mobility]]
 	var moves = [_board_pos]
 	
@@ -76,44 +84,54 @@ func avaiable_moves(board):
 
 # return all avaiable rotations the piece can make this turn
 func avaiable_rotations():
-	return [(_rotation+1) % Rotation.size(), (_rotation-1) % Rotation.size()]
+	if _rotation.x == 0:
+		return [Vector2(1,0), Vector2(-1, 0)]
+	elif _rotation.y == 0:
+		return [Vector2(0,1), Vector2(0, -1)]
+	else: 
+		return []
 
 
-# abstract, returns all the positions this piece's passive effect influences
-func _passive_subscribed_positions():
+
+# TAGS FUNCS----------------------------------------------------------------------------------------------------
+
+# Tag moving
+func moving():
 	pass
 
 
-# abstract, updates the state of multiple pieces according to his passive effect
-func _passive_effect(affected_pieces):
+
+# ABSTRACT FUNCS------------------------------------------------------------------------------------------------
+
+# pure abstract, returns the subscribed positions for this piece in the form of [ [position, effect] ]
+func _subscribed_positions():
 	pass
 
 
-# abstract, returns all the positions this piece's active effect influences
-func _active_subscribed_positions():
-	pass
+# abstract, called when an effect changes the state of this piece, call this function if you override it
+func _state_changed():
+	pass #TODO update subscriptions-table
 
 
-# abstract, updates the state of multiple pieces according to his active effect
-func _active_effect(affected_pieces):
-	pass
-
-
-# abstract, function called when the piece is activated, must yield for every state it reaches
-func _activate():
-	pass
-
-
-# called at the start of each turn
-func turn_started():
+# called at the start of each turn, call this function if you override it
+func _turn_started():
 	_remaining_actions = _action_points
 
 
-# called at the end of each turn
-func turn_ended():
+# called at the end of each turn, call this function if you override it
+func _turn_ended():
 	pass
 
 
-# called when the piece is destroyed
-func destroy():
+# called when the piece is destroyed, call this function if you override it
+func _destroy():
 	free()
+
+
+# abstract, changes of states that happen when this piece is activated
+func _activate():
+	pass
+
+# returns whether this piece dropped to 0 health or not (doesn't call _destroy by default)
+func _take_damage(value :int) -> bool:
+	pass

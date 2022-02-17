@@ -9,13 +9,25 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Reference",
+"class": "Effect",
+"language": "GDScript",
+"path": "res://source/pieces/abstractions/Effect.gd"
+}, {
 "base": "Position2D",
 "class": "Piece",
 "language": "GDScript",
 "path": "res://source/pieces/abstractions/Piece.gd"
+}, {
+"base": "Reference",
+"class": "Tag",
+"language": "GDScript",
+"path": "res://source/pieces/abstractions/Tag.gd"
 } ]
 _global_script_class_icons={
-"Piece": ""
+"Effect": "",
+"Piece": "",
+"Tag": ""
 }
 
 [application]
