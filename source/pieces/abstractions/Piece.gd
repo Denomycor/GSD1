@@ -108,17 +108,17 @@ func _subscribed_positions():
 	pass
 
 
-# abstract, called when an effect changes the state of this piece, call this function if you override it
+# abstract, called the state of this piece is changed, call this function if you override it
 func _state_changed():
 	pass #TODO update subscriptions-table
 
 
-# called at the start of each turn, call this function if you override it
+# called at the start of each turn, call this function if you override it, returns pieces that changed their state
 func _turn_started():
 	_remaining_actions = _action_points
 
 
-# called at the end of each turn, call this function if you override it
+# called at the end of each turn, call this function if you override it, returns pieces that changed their state
 func _turn_ended():
 	pass
 
@@ -131,6 +131,7 @@ func _destroy():
 # abstract, called when a piece is activated, returns the pieces that changed their state
 func _activate():
 	pass
+
 
 # returns whether this piece dropped to 0 health or not (doesn't call _destroy by default)
 func _take_damage(value :int) -> bool:
