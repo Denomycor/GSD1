@@ -29,18 +29,18 @@ func _ready():
 	
 	var piece = add_piece(preload("res://source/pieces/Piece.tscn"), Vector2(5,8), 0, Vector2.UP)
 	var piece2 = add_piece(preload("res://source/pieces/Piece.tscn"), Vector2(4,8), 0, Vector2.UP)
-	#var piece3 = add_piece(preload("res://source/pieces/Piece.tscn"), Vector2(3,8), 0, Vector2.UP)
+	var piece3 = add_piece(preload("res://source/pieces/Piece.tscn"), Vector2(3,8), 0, Vector2.UP)
 	#var piece4 = add_piece(preload("res://source/pieces/Piece.tscn"), Vector2(5,8), 0, Vector2.UP)
 
-	piece.add_tag_moving(1, Vector2.RIGHT)
-	piece2.add_tag_moving(1, Vector2.RIGHT)
-	#piece3.add_tag_moving(1, Vector2.UP)
+	piece.add_tag_moving(10, Vector2.RIGHT)
+	piece2.add_tag_moving(10, Vector2.RIGHT)
+	piece3.add_tag_moving(10, Vector2.UP)
 	#piece4.add_tag_moving(1, Vector2.DOWN)
 	
 	$Timer2.start() #temp
 	yield($Timer2, "timeout")
 	
-	solve([piece2, piece], [])
+	solve([piece3, piece2, piece], [])
 
 
 func process_move(piece, move_list, next_list):
@@ -52,11 +52,16 @@ func process_move(piece, move_list, next_list):
 	# 1 - check if anyone affects you
 	# 2 - check if you affect anyone
 	# 3 - check if move still apllies
-	if piece.will_move():
-		pieces[piece.boardPos.x][piece.boardPos.y] = null
-		piece.move()
-		pieces[piece.boardPos.x][piece.boardPos.y] = piece
+	if piece.tag_list.has(tags.MOVING):
+		#todo remove tags uppon collision
+		if piece.avaiable_move():
+			pieces[piece.boardPos.x][piece.boardPos.y] = null
+			piece.move()
+			pieces[piece.boardPos.x][piece.boardPos.y] = piece
+		else:
+			piece.tag_list.erase(tags.MOVING)
 		next_list.append(piece)
+		
 
 
 func solve(move_list, immediate_list):
@@ -77,6 +82,7 @@ func solve(move_list, immediate_list):
 		$Timer.start()
 		yield($Timer, "timeout")
 	
+	print_debug("finished")
 
 
 func init(format, matrix_sizes):
