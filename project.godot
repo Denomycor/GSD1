@@ -8,6 +8,28 @@
 
 config_version=4
 
+_global_script_classes=[ {
+"base": "Node2D",
+"class": "Board",
+"language": "GDScript",
+"path": "res://source/board/Board.gd"
+}, {
+"base": "Reference",
+"class": "Effect",
+"language": "GDScript",
+"path": "res://source/pieces/Effect.gd"
+}, {
+"base": "Position2D",
+"class": "Piece",
+"language": "GDScript",
+"path": "res://source/pieces/Piece.gd"
+} ]
+_global_script_class_icons={
+"Board": "",
+"Effect": "",
+"Piece": ""
+}
+
 [application]
 
 config/name="GSD1"
