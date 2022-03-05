@@ -54,6 +54,7 @@ func check_other_piece_in_way(move_list):
 
 
 func get_subscribed_pos():
+	#must return positions in order
 	return [boardPos+direction]
 
 
@@ -70,7 +71,7 @@ func update_subs_table():
 	if new_pos.size() == last_sub_indexes.size():
 		needs_update = false
 		for i in range(new_pos.size()):
-			if new_pos[i] != last_sub_indexes[id]:
+			if new_pos[i] != last_sub_indexes[i]:
 				needs_update = true
 				break
 	
@@ -88,8 +89,16 @@ func update_subs_table():
 		
 		# new subs
 		for pos in last_sub_indexes:
-			board.subs[pos.x][pos.y].append(effect)
-			
+			board.subs[pos.x][pos.y].append(effect) # needs to be inserted in order
+
+
 func collided():
 	tag_list.erase(tags.MOVING)
 	tag_list[tags.ACTIVABLE] = false # not in all contexts
+
+
+static func has_piece_with_id(container, id):
+	for piece in container:
+		if piece.id == id:
+			return true
+	return false

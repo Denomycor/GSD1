@@ -14,6 +14,7 @@ const play_speed = 0.1
 var piece_id_count := 0 # limit 9223372036854775807
 
 func _ready():
+	
 	$Timer.wait_time = play_speed
 	init([
 	"wwwwwwwwwwww",
@@ -49,6 +50,8 @@ func _ready():
 	piece2.destroy()
 
 
+
+
 func process_move(piece, move_list, next_list):
 	var piece_eval_first = piece.check_other_piece_in_way(move_list)
 	if piece_eval_first != null:
@@ -57,9 +60,7 @@ func process_move(piece, move_list, next_list):
 	# process one move eval
 	# 1 - check if anyone affects you
 	# 2 - check if you affect anyone
-	# 3 - check if move still apllies
 	if piece.tag_list.has(tags.MOVING):
-		#todo remove tags uppon collision
 		if piece.avaiable_move():
 			pieces[piece.boardPos.x][piece.boardPos.y] = null
 			piece.move()
@@ -113,3 +114,4 @@ func get_piece(coord):
 
 func empty_pos(pos):
 	return format[pos.x][pos.y] == 'e' and pieces[pos.x][pos.y] == null
+	
