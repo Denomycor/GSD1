@@ -1,17 +1,18 @@
 extends Reference
 
 
-static func create_null_matrix(x, y):
+static func create_matrix(x, y, value):
 	var temp = []
 	for i in range(y):
-		temp.append(create_null_array(x))
+		temp.append(create_array(x, value))
 	return temp
 
 
-static func create_null_array(x):
-	var temp = [null]
-	temp.resize(x)
-	return temp
+static func create_array(x, value):
+	var temp = []
+	for i in range(x):
+		temp.append(value)
+	return temp	
 
 
 static func vec_before(v1, v2):

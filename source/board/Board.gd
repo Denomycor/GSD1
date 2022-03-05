@@ -11,6 +11,7 @@ var pieces
 var subs
 var format
 const play_speed = 0.1
+var piece_id_count := 0 # limit 9223372036854775807
 
 func _ready():
 	$Timer.wait_time = play_speed
@@ -41,6 +42,11 @@ func _ready():
 	yield($Timer2, "timeout")
 	
 	solve([piece3, piece2, piece], [])
+	
+	$Timer2.start() #temp
+	yield($Timer2, "timeout")
+	
+	piece2.destroy()
 
 
 func process_move(piece, move_list, next_list):
@@ -87,16 +93,17 @@ func solve(move_list, immediate_list):
 
 func init(format, matrix_sizes):
 	self.format = format
-	self.pieces = helper.create_null_matrix(matrix_sizes.x, matrix_sizes.y)
-	self.subs = helper.create_null_matrix(matrix_sizes.x, matrix_sizes.y)
+	self.pieces = helper.create_matrix(matrix_sizes.x, matrix_sizes.y, null)
+	self.subs = helper.create_matrix(matrix_sizes.x, matrix_sizes.y, [])
 
 
 func add_piece(piece, boardPos, team, direction):
 	piece = piece.instance()
-	piece.init(boardPos, team, self, direction, play_speed) #etc
+	piece.init(boardPos, team, self, direction, play_speed, piece_id_count) #etc
 	pieces[boardPos.x][boardPos.y] = piece
 	# ask to update subs table
 	add_child(piece)
+	piece_id_count += 1
 	return piece
 
 

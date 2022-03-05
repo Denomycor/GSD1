@@ -15,9 +15,9 @@ _global_script_classes=[ {
 "path": "res://source/board/Board.gd"
 }, {
 "base": "Reference",
-"class": "Effect",
+"class": "Effects",
 "language": "GDScript",
-"path": "res://source/pieces/Effect.gd"
+"path": "res://source/pieces/Effects.gd"
 }, {
 "base": "Position2D",
 "class": "Piece",
@@ -26,7 +26,7 @@ _global_script_classes=[ {
 } ]
 _global_script_class_icons={
 "Board": "",
-"Effect": "",
+"Effects": "",
 "Piece": ""
 }
 
