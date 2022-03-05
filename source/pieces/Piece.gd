@@ -65,7 +65,7 @@ func destroy():
 func update_subs_table():
 	var new_pos = get_subscribed_pos()
 	
-	# check if update is necessary
+	# check if update is necessary, might not be needed
 	var needs_update = true
 	if new_pos.size() == last_sub_indexes.size():
 		needs_update = false
@@ -89,3 +89,7 @@ func update_subs_table():
 		# new subs
 		for pos in last_sub_indexes:
 			board.subs[pos.x][pos.y].append(effect)
+			
+func collided():
+	tag_list.erase(tags.MOVING)
+	tag_list[tags.ACTIVABLE] = false # not in all contexts

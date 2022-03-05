@@ -65,7 +65,7 @@ func process_move(piece, move_list, next_list):
 			piece.move()
 			pieces[piece.boardPos.x][piece.boardPos.y] = piece
 		else:
-			piece.tag_list.erase(tags.MOVING)
+			piece.collided()
 		next_list.append(piece)
 		
 
