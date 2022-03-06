@@ -23,10 +23,17 @@ func init(boardPos, team, board, direction, play_speed, id):
 	self.direction = direction
 	self.play_speed = play_speed
 	self.id = id
+	var correct = direction.rotated(PI/2)
+	$Sprite.rotation = atan2(correct.y, correct.x)
 
 
 func add_tag_moving(moves, direction):
 	tag_list[tags.MOVING] = [moves, direction]
+	return self
+
+
+func add_tag_rotating(angle):
+	tag_list[tags.ROTATING] = angle
 	return self
 
 
@@ -36,8 +43,19 @@ func move():
 		tag_list[tags.MOVING][0] -= 1
 	else:
 		tag_list.erase(tags.MOVING)
-	$MoveTween.interpolate_property(self, "position", position, board.grid.map_to_world(boardPos), play_speed)
-	$MoveTween.start()
+	$Tween.interpolate_property(self, "position", position, board.grid.map_to_world(boardPos), play_speed)
+	$Tween.start()
+
+
+func rotate2():
+	var angle = tag_list[tags.ROTATING]
+	direction = direction.rotated(angle)
+	if tag_list.has(tags.MOVING):
+		tag_list[tags.MOVING][1] = tag_list[tags.MOVING][1].rotated(angle)
+	tag_list.erase(tags.ROTATING)
+	
+	$Tween.interpolate_property($Sprite, "rotation", $Sprite.rotation, $Sprite.rotation+angle, play_speed)
+	$Tween.start()
 
 
 func avaiable_move():
@@ -45,11 +63,27 @@ func avaiable_move():
 
 
 func check_other_piece_in_way(move_list):
-	for i in range(move_list.size()):
-		var piece = move_list[i]
-		if piece.tag_list.has(tags.MOVING):
-			if piece.boardPos == boardPos + tag_list[tags.MOVING][1] and piece.tag_list[tags.MOVING][1]*-1 != tag_list[tags.MOVING][1]:
-				return [piece, i]
+	if tag_list.has(tags.MOVING):
+		for i in range(move_list.size()):
+			var piece = move_list[i]
+			if piece.tag_list.has(tags.MOVING):
+				
+				# ill rotate before moving
+				if tag_list.has(tags.ROTATING) and !piece.tag_list.has(tags.ROTATING):
+					if piece.boardPos == boardPos + tag_list[tags.MOVING][1].rotated(tag_list[tags.ROTATING]) and piece.tag_list[tags.MOVING][1]*-1 != tag_list[tags.MOVING][1].rotated(tag_list[tags.ROTATING]):
+						return [piece, i]
+				# noone will rotate before moving
+				elif !tag_list.has(tags.ROTATING) and !piece.tag_list.has(tags.ROTATING):
+					if piece.boardPos == boardPos + tag_list[tags.MOVING][1] and piece.tag_list[tags.MOVING][1]*-1 != tag_list[tags.MOVING][1]:
+						return [piece, i]
+				# other will rotate before moving
+				elif !tag_list.has(tags.ROTATING) and piece.tag_list.has(tags.ROTATING):
+					if piece.boardPos == boardPos + tag_list[tags.MOVING][1] and piece.tag_list[tags.MOVING][1].rotated(piece.tag_list[tags.ROTATING])*-1 != tag_list[tags.MOVING][1]:
+						return [piece, i]
+				# both will rotate before moving
+				elif tag_list.has(tags.ROTATING) and piece.tag_list.has(tags.ROTATING):
+					if piece.boardPos == boardPos + tag_list[tags.MOVING][1].rotated(tag_list[tags.ROTATING]) and piece.tag_list[tags.MOVING][1].rotated(piece.tag_list[tags.ROTATING])*-1 != tag_list[tags.MOVING][1].rotated(tag_list[tags.ROTATING]):
+						return [piece, i]
 	return null
 
 

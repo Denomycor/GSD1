@@ -29,14 +29,17 @@ func _ready():
 	"wwwwwwwwwwww",
 	], Vector2(12, 10))
 	
-	var piece = add_piece(preload("res://source/pieces/Piece.tscn"), Vector2(5,8), 0, Vector2.UP)
-	var piece2 = add_piece(preload("res://source/pieces/Piece.tscn"), Vector2(4,8), 0, Vector2.UP)
+	var piece = add_piece(preload("res://source/pieces/Piece.tscn"), Vector2(5,8), 0, Vector2.LEFT)
+	var piece2 = add_piece(preload("res://source/pieces/Piece.tscn"), Vector2(4,8), 0, Vector2.RIGHT)
 	var piece3 = add_piece(preload("res://source/pieces/Piece.tscn"), Vector2(3,8), 0, Vector2.UP)
 	#var piece4 = add_piece(preload("res://source/pieces/Piece.tscn"), Vector2(5,8), 0, Vector2.UP)
 
-	piece.add_tag_moving(10, Vector2.RIGHT)
+	piece.add_tag_moving(10, Vector2.LEFT)
 	piece2.add_tag_moving(10, Vector2.RIGHT)
 	piece3.add_tag_moving(10, Vector2.UP)
+	#piece.add_tag_rotating(-PI/2)
+	piece2.add_tag_rotating(PI/2)
+	piece3.add_tag_rotating(-PI/2)
 	#piece4.add_tag_moving(1, Vector2.DOWN)
 	
 	$Timer2.start() #temp
@@ -46,8 +49,6 @@ func _ready():
 	
 	$Timer2.start() #temp
 	yield($Timer2, "timeout")
-	
-	piece2.destroy()
 
 
 func process_move(piece, move_list, next_list):
@@ -55,9 +56,19 @@ func process_move(piece, move_list, next_list):
 	if piece_eval_first != null:
 		move_list.remove(piece_eval_first[1])
 		process_move(piece_eval_first[0], move_list, next_list)	
+	
+	var already_added = false
+	
 	# process one move eval
 	# 1 - check if anyone affects you
 	# 2 - check if you affect anyone
+	
+	if piece.tag_list.has(tags.ROTATING):
+		piece.rotate2()
+		if !already_added:
+			next_list.append(piece)
+			already_added = true
+	
 	if piece.tag_list.has(tags.MOVING):
 		if piece.avaiable_move():
 			pieces[piece.boardPos.x][piece.boardPos.y] = null
@@ -65,7 +76,10 @@ func process_move(piece, move_list, next_list):
 			pieces[piece.boardPos.x][piece.boardPos.y] = piece
 		else:
 			piece.collided()
-		next_list.append(piece)
+			
+		if !already_added:
+			next_list.append(piece)
+			already_added = true
 
 
 func solve(move_list, immediate_list):
@@ -111,4 +125,3 @@ func get_piece(coord):
 
 func empty_pos(pos):
 	return format[pos.x][pos.y] == 'e' and pieces[pos.x][pos.y] == null
-	

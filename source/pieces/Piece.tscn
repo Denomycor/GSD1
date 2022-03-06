@@ -11,6 +11,4 @@ script = ExtResource( 1 )
 position = Vector2( 16, 16 )
 texture = ExtResource( 2 )
 
-[node name="MoveTween" type="Tween" parent="."]
-
-[node name="RotateTween" type="Tween" parent="."]
+[node name="Tween" type="Tween" parent="."]
