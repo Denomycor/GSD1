@@ -15,6 +15,7 @@ static func create_array(x, value):
 	return temp	
 
 
+# returns whether v1 comes before v2 if reading board from top to bottom, left to right
 static func vec_before(v1, v2):
 	if v1.y < v2.y:
 		return true

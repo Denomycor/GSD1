@@ -1,7 +1,7 @@
 class_name Effects
 extends Reference
 
-
+# inserts effects in array based on order to be processed
 static func insert_effect_in_order(container, effect):
 	var helper := preload("res://source/Helper.gd")
 	for i in range(container.size()):

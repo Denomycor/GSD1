@@ -106,41 +106,31 @@ func destroy():
 	queue_free()
 
 
-
 #updates subscriptions table
 func update_subs_table():
-	var new_pos = get_subscribed_pos()
 	
-	# check if update is necessary, might not be needed
-	var needs_update = true
-	if new_pos.size() == last_sub_indexes.size():
-		needs_update = false
-		for i in range(new_pos.size()):
-			if new_pos[i] != last_sub_indexes[i]:
-				needs_update = true
-				break
+	# check if update is necessary, might not be needed as subscriptions only depend on pos and rotation
+	# so it will always be called on process_move
 	
-	if needs_update:
-		
-		# remove old subs
-		for pos in last_sub_indexes:
-			var cell = board.subs[pos.x][pos.y]
-			for i in range(cell.size()):
-				if cell[i].source_piece.id == id:
-					cell.remove(i)
-		
-		# update last_sub_indexes
-		last_sub_indexes = new_pos
-		
-		# new subs
-		for pos in last_sub_indexes:
-			board.subs[pos.x][pos.y].append(effect) # needs to be inserted in order
+	# remove old subs
+	for pos in last_sub_indexes:
+		var cell_effects = board.subs[pos.x][pos.y]
+		for i in range(cell_effects.size()):
+			if cell_effects[i].source_piece.id == id:
+				cell_effects.remove(i)
+	
+	# update last_sub_indexes
+	last_sub_indexes = get_subscribed_pos()
+	
+	# new subs
+	for pos in last_sub_indexes:
+		board.subs[pos.x][pos.y].append(effect) # needs to be inserted in order based on priority and pos
 
 
 # called when piece stops movement by collision
 func collided():
 	tag_list.erase(tags.MOVING)
-	tag_list[tags.ACTIVABLE] = false # not in all contexts
+	#tag_list[tags.ACTIVABLE] = false # not in all contexts
 
 
 
