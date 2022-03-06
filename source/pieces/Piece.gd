@@ -15,6 +15,7 @@ onready var tags = preload("res://source/pieces/Tags.gd")
 onready var effects = load("res://source/pieces/Effects.gd")
 
 
+# Initialize all necessary variables
 func init(boardPos, team, board, direction, play_speed, id):
 	self.boardPos = boardPos
 	self.position = board.grid.map_to_world(boardPos)
@@ -27,16 +28,19 @@ func init(boardPos, team, board, direction, play_speed, id):
 	$Sprite.rotation = atan2(correct.y, correct.x)
 
 
+# add tag moving
 func add_tag_moving(moves, direction):
 	tag_list[tags.MOVING] = [moves, direction]
 	return self
 
 
+# add rotating tag
 func add_tag_rotating(angle):
 	tag_list[tags.ROTATING] = angle
 	return self
 
 
+# move piece 1 cell and update moving state
 func move():
 	boardPos += tag_list[tags.MOVING][1]
 	if tag_list[tags.MOVING][0] > 1:
@@ -47,6 +51,7 @@ func move():
 	$Tween.start()
 
 
+# rotate cell and update rotating state
 func rotate2():
 	var angle = tag_list[tags.ROTATING]
 	direction = direction.rotated(angle)
@@ -58,10 +63,12 @@ func rotate2():
 	$Tween.start()
 
 
+# checks if next position on movement is clear
 func avaiable_move():
 	return board.empty_pos(boardPos + tag_list[tags.MOVING][1])
 
 
+# checks if to make one move, another piece's movement needs to be processed first
 func check_other_piece_in_way(move_list):
 	if tag_list.has(tags.MOVING):
 		for i in range(move_list.size()):
@@ -87,16 +94,20 @@ func check_other_piece_in_way(move_list):
 	return null
 
 
+# returns positions for this piece effect
 func get_subscribed_pos():
 	#must return positions in order, maybe not
 	return [boardPos+direction]
 
 
+# destroys this piece
 func destroy():
 	board.remove_child(self)
 	queue_free()
 
 
+
+#updates subscriptions table
 func update_subs_table():
 	var new_pos = get_subscribed_pos()
 	
@@ -126,9 +137,11 @@ func update_subs_table():
 			board.subs[pos.x][pos.y].append(effect) # needs to be inserted in order
 
 
+# called when piece stops movement by collision
 func collided():
 	tag_list.erase(tags.MOVING)
 	tag_list[tags.ACTIVABLE] = false # not in all contexts
+
 
 
 static func has_piece_with_id(container, id):

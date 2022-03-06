@@ -51,6 +51,7 @@ func _ready():
 	yield($Timer2, "timeout")
 
 
+# processes one piece from moves queue
 func process_move(piece, move_list, next_list):
 	var piece_eval_first = piece.check_other_piece_in_way(move_list)
 	if piece_eval_first != null:
@@ -82,6 +83,7 @@ func process_move(piece, move_list, next_list):
 			already_added = true
 
 
+# algorithm for solving turns
 func solve(move_list, immediate_list):
 	var next_list = []
 	
@@ -103,12 +105,14 @@ func solve(move_list, immediate_list):
 	print_debug("finished")
 
 
+# initializes board
 func init(format, matrix_sizes):
 	self.format = format
 	self.pieces = helper.create_matrix(matrix_sizes.x, matrix_sizes.y, null)
 	self.subs = helper.create_matrix(matrix_sizes.x, matrix_sizes.y, [])
 
 
+# instanciates a piece in the board
 func add_piece(piece, boardPos, team, direction):
 	piece = piece.instance()
 	piece.init(boardPos, team, self, direction, play_speed, piece_id_count) #etc
@@ -119,9 +123,11 @@ func add_piece(piece, boardPos, team, direction):
 	return piece
 
 
+# gets piece at given coordinates
 func get_piece(coord):
 	return pieces[coord.x][coord.y]
 
 
+# gets whether the given pos is vacant or not
 func empty_pos(pos):
 	return format[pos.x][pos.y] == 'e' and pieces[pos.x][pos.y] == null
