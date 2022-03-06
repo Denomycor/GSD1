@@ -54,7 +54,7 @@ func check_other_piece_in_way(move_list):
 
 
 func get_subscribed_pos():
-	#must return positions in order
+	#must return positions in order, maybe not
 	return [boardPos+direction]
 
 

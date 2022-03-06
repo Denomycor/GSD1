@@ -50,8 +50,6 @@ func _ready():
 	piece2.destroy()
 
 
-
-
 func process_move(piece, move_list, next_list):
 	var piece_eval_first = piece.check_other_piece_in_way(move_list)
 	if piece_eval_first != null:
@@ -68,7 +66,6 @@ func process_move(piece, move_list, next_list):
 		else:
 			piece.collided()
 		next_list.append(piece)
-		
 
 
 func solve(move_list, immediate_list):
