@@ -96,7 +96,7 @@ func check_other_piece_in_way(move_list):
 
 # returns positions for this piece effect
 func get_subscribed_pos():
-	#must return positions in order, maybe not
+	#must return positions in order
 	return [boardPos+direction]
 
 
@@ -108,7 +108,6 @@ func destroy():
 
 #updates subscriptions table
 func update_subs_table():
-	
 	# check if update is necessary, might not be needed as subscriptions only depend on pos and rotation
 	# so it will always be called on process_move
 	
@@ -124,13 +123,35 @@ func update_subs_table():
 	
 	# new subs
 	for pos in last_sub_indexes:
-		board.subs[pos.x][pos.y].append(effect) # needs to be inserted in order based on priority and pos
+		effect.insert_effect_in_order(board.subs[pos.x][pos.y], (effect)) # needs to be inserted in order based on priority and pos
 
 
 # called when piece stops movement by collision
 func collided():
 	tag_list.erase(tags.MOVING)
 	#tag_list[tags.ACTIVABLE] = false # not in all contexts
+
+
+# returns all pieces in position to suffer from effect, in the order they must be processed
+func make_affected_pieces_list():
+	var pos = get_subscribed_pos()
+	var pieces_in_order = []
+	for i in range(pos.size(), 0, -1):
+		i=i-1
+		var piece = board.get_piece(pos[i])
+		if piece != null:
+	
+			var found = false
+			for j in range(pieces_in_order.size()):
+				if piece.priority >= pieces_in_order[j].priority:
+					pieces_in_order.insert(j, piece)
+					found = true
+					break
+	
+			if !found:
+				pieces_in_order.append(piece)
+	
+	return pieces_in_order
 
 
 
