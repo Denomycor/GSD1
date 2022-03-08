@@ -1,8 +1,7 @@
 class_name Helper
 extends Reference
 
-
-
+# creates a 3dmatrix of size xyz with value
 static func create_matrix3(x, y, z, value):
 	var temp = []
 	for i in range(y):
@@ -10,6 +9,7 @@ static func create_matrix3(x, y, z, value):
 	return temp
 
 
+# creates a matrix of size xy with value
 static func create_matrix(x, y, value):
 	var temp = []
 	for i in range(y):
@@ -17,6 +17,7 @@ static func create_matrix(x, y, value):
 	return temp
 
 
+# creates an array of size x with value
 static func create_array(x, value):
 	var temp = []
 	for i in range(x):
@@ -36,6 +37,7 @@ static func vec_before(v1, v2):
 		return false
 
 
+# checks if container has piece with id
 static func has_piece_with_id(container, id):
 	for piece in container:
 		if piece.id == id:
@@ -60,4 +62,3 @@ static func insert_effect_in_order(container, effect):
 			container.insert(i, effect)
 			return
 	container.append(effect)
-

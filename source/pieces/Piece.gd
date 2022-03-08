@@ -1,7 +1,7 @@
 class_name Piece
 extends Position2D
 
-var tag_list = {}
+var tag_list := {}
 var team
 var board
 var direction
@@ -25,9 +25,9 @@ func init(boardPos, team, board, direction, play_speed, id):
 	helper = preload("res://source/Helper.gd")
 	no_effect = load("res://source/effects/NoEffect.gd")
 	
-	priority = 1
-	effect = no_effect.new()
-	effect.init(self, 1)
+	self.priority = 1
+	self.effect = no_effect.new()
+	self.effect.init(self, 1)
 	
 	self.boardPos = boardPos
 	self.position = board.grid.map_to_world(boardPos)
@@ -39,7 +39,7 @@ func init(boardPos, team, board, direction, play_speed, id):
 	var correct = direction.rotated(PI/2)
 	$Sprite.rotation = atan2(correct.y, correct.x)
 	
-	update_subs_table()
+	add_subs_table()
 
 
 # add tag moving
@@ -116,6 +116,7 @@ func get_subscribed_pos():
 
 # destroys this piece
 func destroy():
+	remove_subs_table()
 	board.remove_child(self)
 	queue_free()
 
@@ -127,21 +128,8 @@ func collided():
 
 #updates subscriptions table
 func update_subs_table():
-	# remove old subs
-	for pos in last_sub_indexes:
-		var cell_effects = board.subs[pos.x][pos.y]
-		for i in range(cell_effects.size()):
-			if cell_effects[i].source_piece.id == id:
-				cell_effects.remove(i)
-				break
-	
-	
-	# update last_sub_indexes
-	last_sub_indexes = get_subscribed_pos()
-	print(String(id)+ " " +String(last_sub_indexes))
-	# new subs
-	for pos in last_sub_indexes:
-		helper.insert_effect_in_order(board.subs[pos.x][pos.y], (effect)) # needs to be inserted in order based on priority and pos
+	remove_subs_table()
+	add_subs_table()
 
 
 # returns all pieces in position to suffer from effect, in the order they must be processed
@@ -164,3 +152,22 @@ func make_affected_pieces_list():
 				pieces_in_order.append(piece)
 	
 	return pieces_in_order
+
+
+# removes its subscriptions from table
+func remove_subs_table():
+	for pos in last_sub_indexes:
+		var cell_effects = board.subs[pos.x][pos.y]
+		for i in range(cell_effects.size()):
+			if cell_effects[i].source_piece.id == id:
+				cell_effects.remove(i)
+				break
+
+
+# add its subscriptions to table
+func add_subs_table():
+	last_sub_indexes = get_subscribed_pos()
+	print(String(id)+ " " +String(last_sub_indexes))
+	# new subs
+	for pos in last_sub_indexes:
+		helper.insert_effect_in_order(board.subs[pos.x][pos.y], (effect)) # needs to be inserted in order based on priority and pos

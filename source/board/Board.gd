@@ -34,12 +34,12 @@ func _ready():
 	var piece = add_piece(piece_scene, Vector2(5,8), 0, Vector2.LEFT)
 	var piece2 = add_piece(piece_scene, Vector2(4,8), 0, Vector2.RIGHT)
 	var piece3 = add_piece(piece_scene, Vector2(3,8), 0, Vector2.UP)
-	#var piece4 = add_piece(preload("res://source/pieces/Piece.tscn"), Vector2(5,8), 0, Vector2.UP)
+	var piece4 = add_piece(piece_scene, Vector2(1,1), 0, Vector2.DOWN)
 
 	piece.add_tag_moving(10, Vector2.LEFT)
 	piece2.add_tag_moving(10, Vector2.RIGHT)
 	piece3.add_tag_moving(10, Vector2.UP)
-	#piece4.add_tag_moving(1, Vector2.DOWN)
+	piece4.add_tag_moving(10, Vector2.DOWN)
 	
 	piece.add_tag_rotating(-PI/2)
 	#piece2.add_tag_rotating(PI/2)
@@ -48,23 +48,22 @@ func _ready():
 	$Timer2.start() #temp
 	yield($Timer2, "timeout")
 	
-	solve([piece, piece2, piece3], [])
+	solve([piece, piece2, piece3, piece4], [])
 	
 	$Timer2.start() #temp
 	yield($Timer2, "timeout")
 
 
 # processes one piece from moves queue
-func process_move(piece, move_list, next_list, immeadiate_list):
+func process_move(piece, move_list, next_list, immediate_list):
 	var piece_eval_first = piece.check_other_piece_in_way(move_list)
 	if piece_eval_first != null: 
 		move_list.remove(piece_eval_first[1])
-		process_move(piece_eval_first[0], move_list, next_list, immeadiate_list)	
+		process_move(piece_eval_first[0], move_list, next_list, immediate_list)	
 	
-	var already_added = false
+	process_effects(piece, move_list, next_list, immediate_list)
 	
-	# 1 - check if anyone affects you
-	# 2 - check if you affect anyone
+	var already_added = helper.has_piece_with_id(next_list, piece.id)
 	
 	if piece.tag_list.has(tags.ROTATING):
 		piece.rotate2()
@@ -77,15 +76,32 @@ func process_move(piece, move_list, next_list, immeadiate_list):
 			pieces[piece.boardPos.x][piece.boardPos.y] = null
 			piece.move()
 			pieces[piece.boardPos.x][piece.boardPos.y] = piece
+			
+			if !already_added:
+				next_list.append(piece)
+				already_added = true
+			
 		else:
 			piece.collided()
 			
-		if !already_added:
-			next_list.append(piece)
-			already_added = true
-			
 	if already_added:
 		piece.update_subs_table()
+
+
+func process_effects(piece, move_list, next_list, immediate_list):
+	# 1 - check anyone affects you
+	for effect in subs[piece.boardPos.x][piece.boardPos.y]:
+		var changes = effect.process_effect(piece)
+		helper.append_piece_array_no_duplicates(move_list, changes[0])
+		helper.append_piece_array_no_duplicates(next_list, changes[1])
+		helper.append_piece_array_no_duplicates(immediate_list, changes[2])
+	
+	# 2 - check if you affect anyone
+	for p in piece.make_affected_pieces_list():
+		var changes = piece.effect.process_effect(p)
+		helper.append_piece_array_no_duplicates(move_list, changes[0])
+		helper.append_piece_array_no_duplicates(next_list, changes[1])
+		helper.append_piece_array_no_duplicates(immediate_list, changes[2])
 
 
 # algorithm for solving turns
@@ -96,8 +112,9 @@ func solve(move_list, immediate_list):
 	
 		while move_list.size() != 0 or immediate_list.size() != 0: # while there are changes to process
 			if immediate_list.size() != 0:
-				# process one immediate eval
-				pass
+				var piece = immediate_list.pop_front()
+				process_effects(piece, move_list, next_list, immediate_list)
+	
 			elif move_list.size() != 0:
 				var piece = move_list.pop_front()
 				process_move(piece, move_list, next_list, immediate_list)

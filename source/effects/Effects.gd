@@ -1,6 +1,8 @@
 class_name Effects
 extends Reference
 
+const tags := preload("res://source/pieces/Tags.gd")
+
 var source_piece
 var priority
 
