@@ -9,14 +9,26 @@ var boardPos
 var play_speed
 var effect
 var id
+var priority
 var last_sub_indexes = []
 
-onready var tags = preload("res://source/pieces/Tags.gd")
-onready var effects = load("res://source/pieces/Effects.gd")
+# scripts
+var tags
+var no_effect
+var helper 
 
 
 # Initialize all necessary variables
 func init(boardPos, team, board, direction, play_speed, id):
+	
+	tags = preload("res://source/pieces/Tags.gd")
+	helper = preload("res://source/Helper.gd")
+	no_effect = load("res://source/effects/NoEffect.gd")
+	
+	priority = 1
+	effect = no_effect.new()
+	effect.init(self, 1)
+	
 	self.boardPos = boardPos
 	self.position = board.grid.map_to_world(boardPos)
 	self.team = team
@@ -26,6 +38,8 @@ func init(boardPos, team, board, direction, play_speed, id):
 	self.id = id
 	var correct = direction.rotated(PI/2)
 	$Sprite.rotation = atan2(correct.y, correct.x)
+	
+	update_subs_table()
 
 
 # add tag moving
@@ -106,30 +120,28 @@ func destroy():
 	queue_free()
 
 
+# called when piece stops movement by collision
+func collided():
+	tag_list.erase(tags.MOVING)
+
+
 #updates subscriptions table
 func update_subs_table():
-	# check if update is necessary, might not be needed as subscriptions only depend on pos and rotation
-	# so it will always be called on process_move
-	
 	# remove old subs
 	for pos in last_sub_indexes:
 		var cell_effects = board.subs[pos.x][pos.y]
 		for i in range(cell_effects.size()):
 			if cell_effects[i].source_piece.id == id:
 				cell_effects.remove(i)
+				break
+	
 	
 	# update last_sub_indexes
 	last_sub_indexes = get_subscribed_pos()
-	
+	print(String(id)+ " " +String(last_sub_indexes))
 	# new subs
 	for pos in last_sub_indexes:
-		effect.insert_effect_in_order(board.subs[pos.x][pos.y], (effect)) # needs to be inserted in order based on priority and pos
-
-
-# called when piece stops movement by collision
-func collided():
-	tag_list.erase(tags.MOVING)
-	#tag_list[tags.ACTIVABLE] = false # not in all contexts
+		helper.insert_effect_in_order(board.subs[pos.x][pos.y], (effect)) # needs to be inserted in order based on priority and pos
 
 
 # returns all pieces in position to suffer from effect, in the order they must be processed
@@ -152,11 +164,3 @@ func make_affected_pieces_list():
 				pieces_in_order.append(piece)
 	
 	return pieces_in_order
-
-
-
-static func has_piece_with_id(container, id):
-	for piece in container:
-		if piece.id == id:
-			return true
-	return false

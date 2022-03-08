@@ -1,16 +1,16 @@
 class_name Board
 extends Node2D
 
-onready var grid = $Grid
-onready var helper = preload("res://source/Helper.gd")
-onready var tags = preload("res://source/pieces/Tags.gd")
+onready var grid := $Grid
+onready var helper := preload("res://source/Helper.gd")
+onready var tags := preload("res://source/pieces/Tags.gd")
 
 # NOTE: ALL MATRIX REPRESENTING THE BOARD ARE TRANSPOSED
 
 var pieces
 var subs
 var format
-const play_speed = 0.1
+const play_speed := 0.1
 var piece_id_count := 0 # limit 9223372036854775807
 
 func _ready():
@@ -29,38 +29,40 @@ func _ready():
 	"wwwwwwwwwwww",
 	], Vector2(12, 10))
 	
-	var piece = add_piece(preload("res://source/pieces/Piece.tscn"), Vector2(5,8), 0, Vector2.LEFT)
-	var piece2 = add_piece(preload("res://source/pieces/Piece.tscn"), Vector2(4,8), 0, Vector2.RIGHT)
-	var piece3 = add_piece(preload("res://source/pieces/Piece.tscn"), Vector2(3,8), 0, Vector2.UP)
+	var piece_scene := preload("res://source/pieces/Piece.tscn")
+	
+	var piece = add_piece(piece_scene, Vector2(5,8), 0, Vector2.LEFT)
+	var piece2 = add_piece(piece_scene, Vector2(4,8), 0, Vector2.RIGHT)
+	var piece3 = add_piece(piece_scene, Vector2(3,8), 0, Vector2.UP)
 	#var piece4 = add_piece(preload("res://source/pieces/Piece.tscn"), Vector2(5,8), 0, Vector2.UP)
 
 	piece.add_tag_moving(10, Vector2.LEFT)
 	piece2.add_tag_moving(10, Vector2.RIGHT)
 	piece3.add_tag_moving(10, Vector2.UP)
-	#piece.add_tag_rotating(-PI/2)
-	piece2.add_tag_rotating(PI/2)
-	piece3.add_tag_rotating(-PI/2)
 	#piece4.add_tag_moving(1, Vector2.DOWN)
+	
+	piece.add_tag_rotating(-PI/2)
+	#piece2.add_tag_rotating(PI/2)
+	piece3.add_tag_rotating(-PI/2)
 	
 	$Timer2.start() #temp
 	yield($Timer2, "timeout")
 	
-	solve([piece3, piece2, piece], [])
+	solve([piece, piece2, piece3], [])
 	
 	$Timer2.start() #temp
 	yield($Timer2, "timeout")
 
 
 # processes one piece from moves queue
-func process_move(piece, move_list, next_list):
+func process_move(piece, move_list, next_list, immeadiate_list):
 	var piece_eval_first = piece.check_other_piece_in_way(move_list)
-	if piece_eval_first != null:
+	if piece_eval_first != null: 
 		move_list.remove(piece_eval_first[1])
-		process_move(piece_eval_first[0], move_list, next_list)	
+		process_move(piece_eval_first[0], move_list, next_list, immeadiate_list)	
 	
 	var already_added = false
 	
-	# process one move eval
 	# 1 - check if anyone affects you
 	# 2 - check if you affect anyone
 	
@@ -81,6 +83,9 @@ func process_move(piece, move_list, next_list):
 		if !already_added:
 			next_list.append(piece)
 			already_added = true
+			
+	if already_added:
+		piece.update_subs_table()
 
 
 # algorithm for solving turns
@@ -95,7 +100,7 @@ func solve(move_list, immediate_list):
 				pass
 			elif move_list.size() != 0:
 				var piece = move_list.pop_front()
-				process_move(piece, move_list, next_list)
+				process_move(piece, move_list, next_list, immediate_list)
 		
 		move_list = next_list
 		next_list = []
@@ -109,7 +114,7 @@ func solve(move_list, immediate_list):
 func init(format, matrix_sizes):
 	self.format = format
 	self.pieces = helper.create_matrix(matrix_sizes.x, matrix_sizes.y, null)
-	self.subs = helper.create_matrix(matrix_sizes.x, matrix_sizes.y, [])
+	self.subs = helper.create_matrix3(matrix_sizes.x, matrix_sizes.y, 0, null)
 
 
 # instanciates a piece in the board

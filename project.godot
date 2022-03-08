@@ -17,17 +17,35 @@ _global_script_classes=[ {
 "base": "Reference",
 "class": "Effects",
 "language": "GDScript",
-"path": "res://source/pieces/Effects.gd"
+"path": "res://source/effects/Effects.gd"
+}, {
+"base": "Reference",
+"class": "Helper",
+"language": "GDScript",
+"path": "res://source/Helper.gd"
+}, {
+"base": "Reference",
+"class": "NoEffect",
+"language": "GDScript",
+"path": "res://source/effects/NoEffect.gd"
 }, {
 "base": "Position2D",
 "class": "Piece",
 "language": "GDScript",
 "path": "res://source/pieces/Piece.gd"
+}, {
+"base": "Reference",
+"class": "Tags",
+"language": "GDScript",
+"path": "res://source/pieces/Tags.gd"
 } ]
 _global_script_class_icons={
 "Board": "",
 "Effects": "",
-"Piece": ""
+"Helper": "",
+"NoEffect": "",
+"Piece": "",
+"Tags": ""
 }
 
 [application]
