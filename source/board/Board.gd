@@ -10,14 +10,14 @@ onready var tags := preload("res://source/pieces/Tags.gd")
 var pieces
 var subs
 var format
-const play_speed := 1
+const play_speed := 0.1
 var piece_id_count := 0 # limit 9223372036854775807
 
 func _ready():
 	
-	$Timer.wait_time = play_speed*10
+	$Timer.wait_time = play_speed
 	init([
-	"weeeeeeeeeee",
+	"wwwwwwwwwwww",
 	"weeeeeeeeeew",
 	"weeeeeeeeeew",
 	"weeeeeeeeeew",
@@ -28,16 +28,16 @@ func _ready():
 	"weeeeeeeeeew",
 	"wwwwwwwwwwww",
 	], Vector2(12, 10))
-	
+
 	var piece_scene := preload("res://source/pieces/Piece.tscn")
 	
-	var piece = add_piece(piece_scene, Vector2(3,3), 0, Vector2.LEFT)
-	var piece2 = add_piece(piece_scene, Vector2(1,3), 0, Vector2.RIGHT)
+	var piece = add_piece(piece_scene, Vector2(5,3), 0, Vector2.LEFT)
+	var piece2 = add_piece(piece_scene, Vector2(3,3), 0, Vector2.LEFT)
 	#var piece3 = add_piece(piece_scene, Vector2(3,8), 0, Vector2.UP)
 	#var piece4 = add_piece(piece_scene, Vector2(1,1), 0, Vector2.DOWN)
 
 	piece.add_tag_moving(10, Vector2.LEFT)
-	piece2.add_tag_moving(10, Vector2.RIGHT)
+	piece2.add_tag_moving(10, Vector2.LEFT)
 	#piece3.add_tag_moving(10, Vector2.UP)
 	#piece4.add_tag_moving(10, Vector2.DOWN)
 	
@@ -86,7 +86,6 @@ func process_move(piece, move_list, next_list, immediate_list):
 			
 	if already_added:
 		piece.update_subs_table()
-	print("processed: "+String(piece.id))
 
 
 func process_effects(piece, move_list, next_list, immediate_list):
@@ -122,10 +121,8 @@ func solve(move_list, immediate_list):
 		
 		move_list = next_list
 		next_list = []
-		yield()#temp
 		$Timer.start()
 		yield($Timer, "timeout")
-		print("---------------------------------")
 	
 	print_debug("finished")
 

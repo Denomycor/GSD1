@@ -29,8 +29,8 @@ func init(boardPos, team, board, direction, play_speed, id):
 	self.effect = no_effect.new()
 	self.effect.init(self, 1)
 	
-	self.boardPos = boardPos
-	self.position = board.grid.map_to_world(boardPos)
+	self.boardPos = boardPos.round()
+	self.position = board.grid.map_to_world(self.boardPos)
 	self.team = team
 	self.board = board
 	self.direction = direction
@@ -43,6 +43,7 @@ func init(boardPos, team, board, direction, play_speed, id):
 
 
 # add tag moving
+# warning-ignore:shadowed_variable
 func add_tag_moving(moves, direction):
 	tag_list[tags.MOVING] = [moves, direction]
 	return self
@@ -56,42 +57,31 @@ func add_tag_rotating(angle):
 
 # move piece 1 cell and update moving state
 func move():
-	print("Moving:")
-	print(String(id)+" from "+String(boardPos))
 	boardPos += tag_list[tags.MOVING][1]
-	print(String(id)+" to "+String(boardPos))
 	if tag_list[tags.MOVING][0] > 1:
 		tag_list[tags.MOVING][0] -= 1
 	else:
 		tag_list.erase(tags.MOVING)
+	boardPos = boardPos.round()
 	$Tween.interpolate_property(self, "position", position, board.grid.map_to_world(boardPos), play_speed)
-	if id==1:#temp
-		print("here")
-		print(boardPos)
-		print(boardPos.is_equal_approx(Vector2(1,2)), boardPos.x == Vector2(1,2).x, boardPos.y == Vector2(1,2).y)
-		print(board.grid.map_to_world(boardPos))
-		print(board.grid.map_to_world(Vector2(1,2)))
 	$Tween.start()
 
 
 # rotate cell and update rotating state
 func rotate2():
-	print("Rotating:")
-	print(String(id)+" from "+String(tag_list[tags.MOVING][1]))
 	var angle = tag_list[tags.ROTATING]
 	direction = direction.rotated(angle)
 	if tag_list.has(tags.MOVING):
 		tag_list[tags.MOVING][1] = tag_list[tags.MOVING][1].rotated(angle)
 	tag_list.erase(tags.ROTATING)
 	
-	print(String(id)+" to "+String(tag_list[tags.MOVING][1]))
 	$Tween.interpolate_property($Sprite, "rotation", $Sprite.rotation, $Sprite.rotation+angle, play_speed)
 	$Tween.start()
 
 
 # checks if next position on movement is clear
 func avaiable_move():
-	return board.empty_pos(boardPos + tag_list[tags.MOVING][1])
+	return board.empty_pos((boardPos + tag_list[tags.MOVING][1]).round())
 
 
 # checks if to make one move, another piece's movement needs to be processed first
