@@ -10,14 +10,14 @@ onready var tags := preload("res://source/pieces/Tags.gd")
 var pieces
 var subs
 var format
-const play_speed := 0.1
+const play_speed := 1
 var piece_id_count := 0 # limit 9223372036854775807
 
 func _ready():
 	
 	$Timer.wait_time = play_speed
 	init([
-	"wwwwwwwwwwww",
+	"eeeeeeeeeeee",
 	"weeeeeeeeeew",
 	"weeeeeeeeeew",
 	"weeeeeeeeeew",
@@ -31,24 +31,24 @@ func _ready():
 	
 	var piece_scene := preload("res://source/pieces/Piece.tscn")
 	
-	var piece = add_piece(piece_scene, Vector2(5,8), 0, Vector2.LEFT)
-	var piece2 = add_piece(piece_scene, Vector2(4,8), 0, Vector2.RIGHT)
-	var piece3 = add_piece(piece_scene, Vector2(3,8), 0, Vector2.UP)
-	var piece4 = add_piece(piece_scene, Vector2(1,1), 0, Vector2.DOWN)
+	var piece = add_piece(piece_scene, Vector2(3,3), 0, Vector2.LEFT)
+	var piece2 = add_piece(piece_scene, Vector2(1,3), 0, Vector2.RIGHT)
+	#var piece3 = add_piece(piece_scene, Vector2(3,8), 0, Vector2.UP)
+	#var piece4 = add_piece(piece_scene, Vector2(1,1), 0, Vector2.DOWN)
 
 	piece.add_tag_moving(10, Vector2.LEFT)
 	piece2.add_tag_moving(10, Vector2.RIGHT)
-	piece3.add_tag_moving(10, Vector2.UP)
-	piece4.add_tag_moving(10, Vector2.DOWN)
+	#piece3.add_tag_moving(10, Vector2.UP)
+	#piece4.add_tag_moving(10, Vector2.DOWN)
 	
-	piece.add_tag_rotating(-PI/2)
+	#piece.add_tag_rotating(-PI/2)
 	#piece2.add_tag_rotating(PI/2)
-	piece3.add_tag_rotating(-PI/2)
+	#piece3.add_tag_rotating(-PI/2)
 	
 	$Timer2.start() #temp
 	yield($Timer2, "timeout")
 	
-	solve([piece, piece2, piece3, piece4], [])
+	solve([piece, piece2], [])
 	
 	$Timer2.start() #temp
 	yield($Timer2, "timeout")
@@ -86,6 +86,7 @@ func process_move(piece, move_list, next_list, immediate_list):
 			
 	if already_added:
 		piece.update_subs_table()
+	print("processed: "+String(piece.id))
 
 
 func process_effects(piece, move_list, next_list, immediate_list):
@@ -123,6 +124,7 @@ func solve(move_list, immediate_list):
 		next_list = []
 		$Timer.start()
 		yield($Timer, "timeout")
+		print("---------------------------------")
 	
 	print_debug("finished")
 

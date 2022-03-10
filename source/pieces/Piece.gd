@@ -167,7 +167,7 @@ func remove_subs_table():
 # add its subscriptions to table
 func add_subs_table():
 	last_sub_indexes = get_subscribed_pos()
-	print(String(id)+ " " +String(last_sub_indexes))
+	####print(String(id)+ " " +String(last_sub_indexes))
 	# new subs
 	for pos in last_sub_indexes:
 		helper.insert_effect_in_order(board.subs[pos.x][pos.y], (effect)) # needs to be inserted in order based on priority and pos
