@@ -5,7 +5,7 @@ var tag_list := {}
 var team
 var board
 var direction
-var boardPos
+var boardPos :Vector2
 var play_speed
 var effect
 var id
@@ -56,23 +56,35 @@ func add_tag_rotating(angle):
 
 # move piece 1 cell and update moving state
 func move():
+	print("Moving:")
+	print(String(id)+" from "+String(boardPos))
 	boardPos += tag_list[tags.MOVING][1]
+	print(String(id)+" to "+String(boardPos))
 	if tag_list[tags.MOVING][0] > 1:
 		tag_list[tags.MOVING][0] -= 1
 	else:
 		tag_list.erase(tags.MOVING)
 	$Tween.interpolate_property(self, "position", position, board.grid.map_to_world(boardPos), play_speed)
+	if id==1:#temp
+		print("here")
+		print(boardPos)
+		print(boardPos.is_equal_approx(Vector2(1,2)), boardPos.x == Vector2(1,2).x, boardPos.y == Vector2(1,2).y)
+		print(board.grid.map_to_world(boardPos))
+		print(board.grid.map_to_world(Vector2(1,2)))
 	$Tween.start()
 
 
 # rotate cell and update rotating state
 func rotate2():
+	print("Rotating:")
+	print(String(id)+" from "+String(tag_list[tags.MOVING][1]))
 	var angle = tag_list[tags.ROTATING]
 	direction = direction.rotated(angle)
 	if tag_list.has(tags.MOVING):
 		tag_list[tags.MOVING][1] = tag_list[tags.MOVING][1].rotated(angle)
 	tag_list.erase(tags.ROTATING)
 	
+	print(String(id)+" to "+String(tag_list[tags.MOVING][1]))
 	$Tween.interpolate_property($Sprite, "rotation", $Sprite.rotation, $Sprite.rotation+angle, play_speed)
 	$Tween.start()
 

@@ -15,9 +15,9 @@ var piece_id_count := 0 # limit 9223372036854775807
 
 func _ready():
 	
-	$Timer.wait_time = play_speed
+	$Timer.wait_time = play_speed*10
 	init([
-	"eeeeeeeeeeee",
+	"weeeeeeeeeee",
 	"weeeeeeeeeew",
 	"weeeeeeeeeew",
 	"weeeeeeeeeew",
@@ -122,6 +122,7 @@ func solve(move_list, immediate_list):
 		
 		move_list = next_list
 		next_list = []
+		yield()#temp
 		$Timer.start()
 		yield($Timer, "timeout")
 		print("---------------------------------")
