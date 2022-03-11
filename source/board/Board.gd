@@ -10,12 +10,12 @@ onready var tags := preload("res://source/pieces/Tags.gd")
 var pieces
 var subs
 var format
-const play_speed := 0.1
+var play_speed := 0.1
 var piece_id_count := 0 # limit 9223372036854775807
 
 func _ready():
 	
-	$Timer.wait_time = play_speed
+	$Timer.wait_time = play_speed*1.01
 	init([
 	"wwwwwwwwwwww",
 	"weeeeeeeeeew",
@@ -35,7 +35,7 @@ func _ready():
 	var piece2 = add_piece(piece_scene, Vector2(3,3), 0, Vector2.LEFT)
 	#var piece3 = add_piece(piece_scene, Vector2(3,8), 0, Vector2.UP)
 	#var piece4 = add_piece(piece_scene, Vector2(1,1), 0, Vector2.DOWN)
-
+	
 	piece.add_tag_moving(10, Vector2.LEFT)
 	piece2.add_tag_moving(10, Vector2.LEFT)
 	#piece3.add_tag_moving(10, Vector2.UP)
@@ -62,7 +62,7 @@ func process_move(piece, move_list, next_list, immediate_list):
 		process_move(piece_eval_first[0], move_list, next_list, immediate_list)	
 	
 	process_effects(piece, move_list, next_list, immediate_list)
-	
+
 	var already_added = helper.has_piece_with_id(next_list, piece.id)
 	
 	if piece.tag_list.has(tags.ROTATING):
@@ -91,6 +91,7 @@ func process_move(piece, move_list, next_list, immediate_list):
 func process_effects(piece, move_list, next_list, immediate_list):
 	# 1 - check anyone affects you
 	for effect in subs[piece.boardPos.x][piece.boardPos.y]:
+
 		var changes = effect.process_effect(piece)
 		helper.append_piece_array_no_duplicates(move_list, changes[0])
 		helper.append_piece_array_no_duplicates(next_list, changes[1])
