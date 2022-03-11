@@ -119,6 +119,8 @@ func get_subscribed_pos():
 # destroys this piece
 func destroy():
 	remove_subs_table()
+	board.pieces[boardPos.x][boardPos.y] = null
+	board.all_pieces.remove(helper.get_index_with_id(board.all_pieces, id))
 	board.remove_child(self)
 	queue_free()
 

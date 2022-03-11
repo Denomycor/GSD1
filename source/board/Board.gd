@@ -8,9 +8,10 @@ onready var tags := preload("res://source/pieces/Tags.gd")
 # NOTE: ALL MATRIX REPRESENTING THE BOARD ARE TRANSPOSED
 
 var pieces
+var all_pieces := []
 var subs
 var format
-var play_speed := 0.1
+var play_speed := 0.1*1
 var piece_id_count := 0 # limit 9223372036854775807
 
 func _ready():
@@ -31,12 +32,12 @@ func _ready():
 
 	var piece_scene := preload("res://source/pieces/Piece.tscn")
 	
-	var piece = add_piece(piece_scene, Vector2(5,3), 0, Vector2.LEFT)
-	var piece2 = add_piece(piece_scene, Vector2(3,3), 0, Vector2.LEFT)
+	var piece = add_piece(piece_scene, Vector2(2,2), 0, Vector2.RIGHT)
+	var piece2 = add_piece(piece_scene, Vector2(7,2), 0, Vector2.LEFT)
 	#var piece3 = add_piece(piece_scene, Vector2(3,8), 0, Vector2.UP)
 	#var piece4 = add_piece(piece_scene, Vector2(1,1), 0, Vector2.DOWN)
 	
-	piece.add_tag_moving(10, Vector2.LEFT)
+	piece.add_tag_moving(10, Vector2.RIGHT)
 	piece2.add_tag_moving(10, Vector2.LEFT)
 	#piece3.add_tag_moving(10, Vector2.UP)
 	#piece4.add_tag_moving(10, Vector2.DOWN)
@@ -48,27 +49,25 @@ func _ready():
 	$Timer2.start() #temp
 	yield($Timer2, "timeout")
 	
-	solve([piece, piece2], [])
+	solve([piece, piece2])
 	
 	$Timer2.start() #temp
 	yield($Timer2, "timeout")
 
 
 # processes one piece from moves queue
-func process_move(piece, move_list, next_list, immediate_list):
-	var piece_eval_first = piece.check_other_piece_in_way(move_list)
-	if piece_eval_first != null: 
-		move_list.remove(piece_eval_first[1])
-		process_move(piece_eval_first[0], move_list, next_list, immediate_list)	
+func move_pieces(piece, move_queue, queue):
+	var piece_eval_first = piece.check_other_piece_in_way(move_queue)
+	if piece_eval_first != null:
+		move_queue.remove(piece_eval_first[1])
+		move_pieces(piece_eval_first[0], move_queue, queue)
 	
-	process_effects(piece, move_list, next_list, immediate_list)
-
-	var already_added = helper.has_piece_with_id(next_list, piece.id)
+	var already_added = false
 	
 	if piece.tag_list.has(tags.ROTATING):
 		piece.rotate2()
 		if !already_added:
-			next_list.append(piece)
+			queue.append(piece)
 			already_added = true
 	
 	if piece.tag_list.has(tags.MOVING):
@@ -78,7 +77,7 @@ func process_move(piece, move_list, next_list, immediate_list):
 			pieces[piece.boardPos.x][piece.boardPos.y] = piece
 			
 			if !already_added:
-				next_list.append(piece)
+				queue.append(piece)
 				already_added = true
 			
 		else:
@@ -88,42 +87,34 @@ func process_move(piece, move_list, next_list, immediate_list):
 		piece.update_subs_table()
 
 
-func process_effects(piece, move_list, next_list, immediate_list):
-	# 1 - check anyone affects you
+func process_changes(piece, queue):
+	# 1 - check if anyone affects you
 	for effect in subs[piece.boardPos.x][piece.boardPos.y]:
-
 		var changes = effect.process_effect(piece)
-		helper.append_piece_array_no_duplicates(move_list, changes[0])
-		helper.append_piece_array_no_duplicates(next_list, changes[1])
-		helper.append_piece_array_no_duplicates(immediate_list, changes[2])
-	
+		helper.append_piece_array_no_duplicates(queue, changes)
+		
 	# 2 - check if you affect anyone
 	for p in piece.make_affected_pieces_list():
 		var changes = piece.effect.process_effect(p)
-		helper.append_piece_array_no_duplicates(move_list, changes[0])
-		helper.append_piece_array_no_duplicates(next_list, changes[1])
-		helper.append_piece_array_no_duplicates(immediate_list, changes[2])
+		helper.append_piece_array_no_duplicates(queue, changes)
 
 
 # algorithm for solving turns
-func solve(move_list, immediate_list):
-	var next_list = []
+func solve(queue):
+	while queue.size() !=0:
 	
-	while move_list.size() != 0:
+		while queue.size() !=0: #there are changes to be processed
+			var piece = queue.pop_front()
+			process_changes(piece, queue)
 	
-		while move_list.size() != 0 or immediate_list.size() != 0: # while there are changes to process
-			if immediate_list.size() != 0:
-				var piece = immediate_list.pop_front()
-				process_effects(piece, move_list, next_list, immediate_list)
-	
-			elif move_list.size() != 0:
-				var piece = move_list.pop_front()
-				process_move(piece, move_list, next_list, immediate_list)
+		var move_queue = all_pieces.duplicate()
+		while move_queue.size() != 0:
+			var p = move_queue.pop_front()
+			move_pieces(p, move_queue, queue)
 		
-		move_list = next_list
-		next_list = []
 		$Timer.start()
 		yield($Timer, "timeout")
+		print_debug("clock_tick")
 	
 	print_debug("finished")
 
@@ -143,6 +134,7 @@ func add_piece(piece, boardPos, team, direction):
 	# ask to update subs table
 	add_child(piece)
 	piece_id_count += 1
+	all_pieces.append(piece)
 	return piece
 
 
