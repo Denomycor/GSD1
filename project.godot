@@ -24,15 +24,10 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://source/Helper.gd"
 }, {
-"base": "Reference",
-"class": "NoEffect",
-"language": "GDScript",
-"path": "res://source/effects/NoEffect.gd"
-}, {
 "base": "Position2D",
 "class": "Piece",
 "language": "GDScript",
-"path": "res://source/pieces/Piece.gd"
+"path": "res://source/pieces/abstraction/Piece.gd"
 }, {
 "base": "Reference",
 "class": "PieceInfo",
@@ -43,15 +38,26 @@ _global_script_classes=[ {
 "class": "Tags",
 "language": "GDScript",
 "path": "res://source/pieces/Tags.gd"
+}, {
+"base": "Reference",
+"class": "TestEffect",
+"language": "GDScript",
+"path": "res://source/effects/TestEffect.gd"
+}, {
+"base": "Position2D",
+"class": "TestPiece",
+"language": "GDScript",
+"path": "res://source/pieces/testPiece/TestPiece.gd"
 } ]
 _global_script_class_icons={
 "Board": "",
 "Effects": "",
 "Helper": "",
-"NoEffect": "",
 "Piece": "",
 "PieceInfo": "",
-"Tags": ""
+"Tags": "",
+"TestEffect": "",
+"TestPiece": ""
 }
 
 [application]

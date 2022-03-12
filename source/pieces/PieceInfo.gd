@@ -14,8 +14,9 @@ var name :String
 var description :String
 var texture :Texture
 var keywords :Array
+var action_points :int
 
-func init(hp, move_range, sight_range, type, element, cost, name, descrition, texture, keywords):
+func init(hp, move_range, sight_range, type, element, cost, name, descrition, texture, keywords, action_points):
 	self.hp = hp
 	self.move_range = move_range
 	self.sight_range = sight_range
@@ -26,3 +27,4 @@ func init(hp, move_range, sight_range, type, element, cost, name, descrition, te
 	self.description = description
 	self.texture = texture
 	self.keywords = keywords
+	self.action_points = action_points

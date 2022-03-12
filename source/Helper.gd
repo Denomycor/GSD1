@@ -64,7 +64,7 @@ static func insert_effect_in_order(container, effect):
 		if effect.priority > container[i].priority:
 			container.insert(i, effect)
 			return
-		elif effect.priority == container[i].priority and vec_before(effect.source_piece.boardPos, container[i].source_piece.boardPos):
+		elif effect.priority == container[i].priority and vec_before(effect.source_piece.board_pos, container[i].source_piece.board_pos):
 			container.insert(i, effect)
 			return
 	container.append(effect)

@@ -1,4 +1,4 @@
-class_name NoEffect
+class_name TestEffect
 extends "res://source/effects/Effects.gd"
 
 

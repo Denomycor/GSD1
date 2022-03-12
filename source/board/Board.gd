@@ -30,7 +30,7 @@ func _ready():
 	"wwwwwwwwwwww",
 	], Vector2(12, 10))
 
-	var piece_scene := preload("res://source/pieces/Piece.tscn")
+	var piece_scene := preload("res://source/pieces/testPiece/TestPiece.tscn")
 	
 	var piece = add_piece(piece_scene, Vector2(2,2), 0, Vector2.RIGHT)
 	var piece2 = add_piece(piece_scene, Vector2(7,2), 0, Vector2.LEFT)
@@ -72,9 +72,9 @@ func move_pieces(piece, move_queue, queue):
 	
 	if piece.tag_list.has(tags.MOVING):
 		if piece.avaiable_move():
-			pieces[piece.boardPos.x][piece.boardPos.y] = null
+			pieces[piece.board_pos.x][piece.board_pos.y] = null
 			piece.move()
-			pieces[piece.boardPos.x][piece.boardPos.y] = piece
+			pieces[piece.board_pos.x][piece.board_pos.y] = piece
 			
 			if !already_added:
 				queue.append(piece)
@@ -89,7 +89,7 @@ func move_pieces(piece, move_queue, queue):
 
 func process_changes(piece, queue):
 	# 1 - check if anyone affects you
-	for effect in subs[piece.boardPos.x][piece.boardPos.y]:
+	for effect in subs[piece.board_pos.x][piece.board_pos.y]:
 		var changes = effect.process_effect(piece)
 		helper.append_piece_array_no_duplicates(queue, changes)
 		
@@ -127,10 +127,10 @@ func init(format, matrix_sizes):
 
 
 # instanciates a piece in the board
-func add_piece(piece, boardPos, team, direction):
+func add_piece(piece, board_pos, team, direction):
 	piece = piece.instance()
-	piece.init(boardPos, team, self, direction, play_speed, piece_id_count) #etc
-	pieces[boardPos.x][boardPos.y] = piece
+	piece.init(board_pos, team, self, direction, play_speed, piece_id_count) #etc
+	pieces[board_pos.x][board_pos.y] = piece
 	# ask to update subs table
 	add_child(piece)
 	piece_id_count += 1
