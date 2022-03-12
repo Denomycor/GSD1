@@ -16,7 +16,7 @@ var piece_id_count := 0 # limit 9223372036854775807
 
 func _ready():
 	
-	$Timer.wait_time = play_speed*1.01
+	$Timer.wait_time = play_speed*1.0
 	init([
 	"wwwwwwwwwwww",
 	"weeeeeeeeeew",
@@ -33,7 +33,7 @@ func _ready():
 	var piece_scene := preload("res://source/pieces/testPiece/TestPiece.tscn")
 	
 	var piece = add_piece(piece_scene, Vector2(2,2), 0, Vector2.RIGHT)
-	var piece2 = add_piece(piece_scene, Vector2(7,2), 0, Vector2.LEFT)
+	var piece2 = add_piece(piece_scene, Vector2(7,2), 0, Vector2.UP)
 	#var piece3 = add_piece(piece_scene, Vector2(3,8), 0, Vector2.UP)
 	#var piece4 = add_piece(piece_scene, Vector2(1,1), 0, Vector2.DOWN)
 	
@@ -99,6 +99,18 @@ func process_changes(piece, queue):
 		helper.append_piece_array_no_duplicates(queue, changes)
 
 
+func destroy_pieces():
+	var i=0
+	while i < all_pieces.size():
+		var piece = all_pieces[i]
+		if piece.current_hp < 1:
+			pieces[piece.board_pos.x][piece.board_pos.y] = null
+			all_pieces.remove(i)
+			piece.destroy()
+		else:
+			i+=1
+
+
 # algorithm for solving turns
 func solve(queue):
 	while queue.size() !=0:
@@ -106,6 +118,8 @@ func solve(queue):
 		while queue.size() !=0: #there are changes to be processed
 			var piece = queue.pop_front()
 			process_changes(piece, queue)
+	
+		destroy_pieces()
 	
 		var move_queue = all_pieces.duplicate()
 		while move_queue.size() != 0:

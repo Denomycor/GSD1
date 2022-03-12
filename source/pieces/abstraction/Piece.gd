@@ -86,8 +86,6 @@ func avaiable_move():
 # destroys this piece
 func destroy():
 	remove_subs_table()
-	board.pieces[board_pos.x][board_pos.y] = null
-	board.all_pieces.remove(helper.get_index_with_id(board.all_pieces, id))
 	board.remove_child(self)
 	queue_free()
 
@@ -95,6 +93,11 @@ func destroy():
 # returns positions for this piece effect, must return positions in order
 func get_subscribed_pos():
 	return [board_pos+direction]
+
+
+# makes the piece take damage
+func take_damage(damage):
+	current_hp -= damage
 
 
 # called when piece stops movement by collision
