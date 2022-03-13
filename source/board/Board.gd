@@ -14,6 +14,8 @@ var format
 var play_speed := 0.1*1
 var piece_id_count := 0 # limit 9223372036854775807
 
+var clean_already_affected := []
+
 func _ready():
 	
 	$Timer.wait_time = play_speed*1.0
@@ -32,8 +34,8 @@ func _ready():
 
 	var piece_scene := preload("res://source/pieces/testPiece/TestPiece.tscn")
 	
-	var piece = add_piece(piece_scene, Vector2(2,2), 0, Vector2.RIGHT)
-	var piece2 = add_piece(piece_scene, Vector2(7,2), 0, Vector2.LEFT)
+	var piece = add_piece(piece_scene, Vector2(4,2), 0, Vector2.RIGHT)
+	var piece2 = add_piece(piece_scene, Vector2(5,2), 0, Vector2.LEFT)
 	#var piece3 = add_piece(piece_scene, Vector2(3,8), 0, Vector2.UP)
 	#var piece4 = add_piece(piece_scene, Vector2(1,1), 0, Vector2.DOWN)
 	
@@ -94,6 +96,8 @@ func process_changes(piece, queue):
 			var changes = effect.process_effect(piece)
 			helper.append_piece_array_no_duplicates(queue, changes)
 			piece.already_affected.append(effect.source_piece.id)
+			if !helper.has_piece_with_id(clean_already_affected, piece.id):
+				clean_already_affected.append(piece)
 		
 	# 2 - check if you affect anyone
 	for p in piece.make_affected_pieces_list():
@@ -101,7 +105,9 @@ func process_changes(piece, queue):
 			var changes = piece.effect.process_effect(p)
 			helper.append_piece_array_no_duplicates(queue, changes)
 			p.already_affected.append(piece.id)
-
+			if !helper.has_piece_with_id(clean_already_affected, p.id):
+				clean_already_affected.append(p)
+				
 
 func destroy_pieces():
 	var i=0
@@ -125,8 +131,9 @@ func solve(queue):
 	
 		destroy_pieces()
 	
-		for piece in all_pieces:
+		for piece in clean_already_affected:
 			piece.already_affected = []
+		clean_already_affected = []
 		
 		var move_queue = all_pieces.duplicate()
 		while move_queue.size() != 0:
@@ -152,7 +159,7 @@ func add_piece(piece, board_pos, team, direction):
 	piece = piece.instance()
 	piece.init(board_pos, team, self, direction, play_speed, piece_id_count) #etc
 	pieces[board_pos.x][board_pos.y] = piece
-	# ask to update subs table
+	
 	add_child(piece)
 	piece_id_count += 1
 	all_pieces.append(piece)

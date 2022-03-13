@@ -8,5 +8,5 @@ func process_effect(affected_piece):
 		print(String(source_piece.id)+" collision "+String(affected_piece.id))
 		#source_piece.tag_list.erase(tags.MOVING)
 		affected_piece.add_tag_rotating(PI/2)
-		affected_piece.take_damage(10)
+		#affected_piece.take_damage(10)
 	return []
