@@ -19,6 +19,7 @@ var tag_list := {}
 var last_sub_indexes := []
 var current_hp :int
 var current_action_points :int
+var already_affected := []
 
 # scripts
 const tags := preload("res://source/pieces/Tags.gd")

@@ -33,7 +33,7 @@ func _ready():
 	var piece_scene := preload("res://source/pieces/testPiece/TestPiece.tscn")
 	
 	var piece = add_piece(piece_scene, Vector2(2,2), 0, Vector2.RIGHT)
-	var piece2 = add_piece(piece_scene, Vector2(7,2), 0, Vector2.UP)
+	var piece2 = add_piece(piece_scene, Vector2(7,2), 0, Vector2.LEFT)
 	#var piece3 = add_piece(piece_scene, Vector2(3,8), 0, Vector2.UP)
 	#var piece4 = add_piece(piece_scene, Vector2(1,1), 0, Vector2.DOWN)
 	
@@ -90,13 +90,17 @@ func move_pieces(piece, move_queue, queue):
 func process_changes(piece, queue):
 	# 1 - check if anyone affects you
 	for effect in subs[piece.board_pos.x][piece.board_pos.y]:
-		var changes = effect.process_effect(piece)
-		helper.append_piece_array_no_duplicates(queue, changes)
+		if !piece.already_affected.has(effect.source_piece.id):
+			var changes = effect.process_effect(piece)
+			helper.append_piece_array_no_duplicates(queue, changes)
+			piece.already_affected.append(effect.source_piece.id)
 		
 	# 2 - check if you affect anyone
 	for p in piece.make_affected_pieces_list():
-		var changes = piece.effect.process_effect(p)
-		helper.append_piece_array_no_duplicates(queue, changes)
+		if !p.already_affected.has(piece.id):
+			var changes = piece.effect.process_effect(p)
+			helper.append_piece_array_no_duplicates(queue, changes)
+			p.already_affected.append(piece.id)
 
 
 func destroy_pieces():
@@ -121,6 +125,9 @@ func solve(queue):
 	
 		destroy_pieces()
 	
+		for piece in all_pieces:
+			piece.already_affected = []
+		
 		var move_queue = all_pieces.duplicate()
 		while move_queue.size() != 0:
 			var p = move_queue.pop_front()
