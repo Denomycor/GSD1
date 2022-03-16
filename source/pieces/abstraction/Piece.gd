@@ -99,6 +99,11 @@ func get_subscribed_pos():
 	pass
 
 
+# called when a piece is activated, returns all pieces that changed state
+func activate():
+	pass
+
+
 # makes the piece take damage
 func take_damage(damage):
 	current_hp -= damage

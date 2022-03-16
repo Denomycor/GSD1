@@ -11,6 +11,6 @@ func init(source_piece, priority):
 	self.priority = priority
 
 
-#returns pieces that changed state and need to be evaluated, [move_list, immediate_list]
+#returns pieces that changed state and need to be evaluated
 func _process_effect(affected_piece):
 	pass #todo

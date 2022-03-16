@@ -73,8 +73,9 @@ func process_changes(piece, queue):
 			p.already_affected.append(piece.id)
 			if !helper.has_piece_with_id(clean_already_affected, p.id):
 				clean_already_affected.append(p)
-				
 
+
+# Called to destroy all pieces with <1 health
 func destroy_pieces():
 	var i=0
 	while i < all_pieces.size():
