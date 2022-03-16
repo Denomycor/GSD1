@@ -10,5 +10,9 @@ func _init():
 	
 	piece_info = pi_ref.new()
 	piece_info.init(2, 2, 6, pi_ref.Types.ATTACK, pi_ref.Elements.FIRE, 75, "Test Piece", "null", "null", [], 2)
-
+	
 	priority = 1
+
+
+func get_subscribed_pos():
+	return [board_pos+direction]

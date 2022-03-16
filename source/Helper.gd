@@ -53,7 +53,7 @@ static func get_index_with_id(container, id):
 
 # adds pieces to array if they are not there yet
 static func append_piece_array_no_duplicates(arr1, arr2):
-	for e in arr2:
+	for e in arr2: 
 		if !has_piece_with_id(arr1, e.id):
 			arr1.append(e)
 

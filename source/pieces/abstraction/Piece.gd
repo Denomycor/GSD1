@@ -93,7 +93,7 @@ func destroy():
 
 # returns positions for this piece effect, must return positions in order
 func get_subscribed_pos():
-	return [board_pos+direction]
+	pass
 
 
 # makes the piece take damage
