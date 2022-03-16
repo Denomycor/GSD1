@@ -1,6 +1,9 @@
 class_name Piece
 extends Position2D
 
+signal piece_right_clicked
+signal piece_left_clicked
+
 # constructor variables
 var board_pos :Vector2
 var direction :Vector2
@@ -128,6 +131,15 @@ func add_subs_table():
 	for pos in last_sub_indexes:
 		helper.insert_effect_in_order(board.subs[pos.x][pos.y], (effect)) # needs to be inserted in order based on priority and pos
 
+
+func _unhandled_input(event):
+	if (event is InputEventMouseButton) and event.pressed:
+		var evLocal := make_input_local(event)
+		if Rect2(Vector2(0,0),$Sprite.texture.get_size()).has_point(evLocal.position):
+			if event.button_index == BUTTON_LEFT:
+				self.emit_signal("piece_left_clicked", self)
+			elif event.button_index == BUTTON_RIGHT:
+				self.emit_signal("piece_right_clicked", self)
 
 # returns all pieces in position to suffer from effect, in the order they must be processed
 func make_affected_pieces_list():
